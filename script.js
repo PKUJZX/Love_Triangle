@@ -15,7 +15,7 @@ const actionStatus = document.getElementById('action-status');
 
 // --- Gemini API Configuration ---
 // The API key is handled by the execution environment.
-const API_KEY = "AIzaSyAXek2PrNa4H0S-nuSAKIDd89-XGrWOSys";
+const API_KEY = "";
 const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${API_KEY}`;
 
 /**
