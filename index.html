@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI 恋爱修罗场模拟器</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="antialiased text-gray-800">
+
+    <div class="container mx-auto p-4 md:p-8 max-w-7xl">
+
+        <!-- Header -->
+        <header class="text-center mb-8">
+            <h1 class="text-4xl md:text-5xl font-bold text-pink-600">AI 恋爱修罗场</h1>
+            <p class="text-gray-500 mt-2">设定角色，观看一场由AI上演的爱情追逐战</p>
+        </header>
+
+        <!-- Character Setup Section -->
+        <section id="setup-section">
+            <h2 class="text-2xl font-bold text-center mb-6 text-pink-500">第一步：设定角色背景</h2>
+            <div class="grid md:grid-cols-3 gap-6">
+                <!-- Character 1: Suitor A -->
+                <div class="character-card p-6">
+                    <h3 class="text-xl font-bold text-center mb-4 text-blue-500">追求者 A</h3>
+                    <textarea id="desc-suitor-a" class="w-full h-24 text-sm" placeholder="例如：一位浪漫的流浪诗人，对月亮和星星有独特的见解。"></textarea>
+                    <button onclick="generateProfile('suitorA')" class="btn-secondary w-full mt-4">生成角色卡</button>
+                    <div id="profile-suitorA" class="mt-4 text-sm text-gray-600 whitespace-pre-wrap"></div>
+                </div>
+                <!-- Character 2: The Judge -->
+                <div class="character-card p-6 border-2 border-pink-400">
+                    <h3 class="text-xl font-bold text-center mb-4 text-yellow-500">被追求者（裁判）</h3>
+                    <textarea id="desc-judge" class="w-full h-24 text-sm" placeholder="例如：一位事业有成的独立女性，内心渴望真诚的连接，但对花言巧语免疫。"></textarea>
+                    <button onclick="generateProfile('judge')" class="btn-secondary w-full mt-4">生成角色卡</button>
+                    <div id="profile-judge" class="mt-4 text-sm text-gray-600 whitespace-pre-wrap"></div>
+                </div>
+                <!-- Character 3: Suitor B -->
+                <div class="character-card p-6">
+                    <h3 class="text-xl font-bold text-center mb-4 text-green-500">追求者 B</h3>
+                    <textarea id="desc-suitor-b" class="w-full h-24 text-sm" placeholder="例如：一位不善言辞但行动力超强的霸道总裁，习惯用行动表达关心。"></textarea>
+                    <button onclick="generateProfile('suitorB')" class="btn-secondary w-full mt-4">生成角色卡</button>
+                    <div id="profile-suitorB" class="mt-4 text-sm text-gray-600 whitespace-pre-wrap"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Main Action Button -->
+        <div class="text-center my-8">
+            <button id="start-round-btn" onclick="startRound()" class="btn-primary text-lg shadow-lg" disabled>
+                🎭 开始回合
+            </button>
+            <p id="action-status" class="text-gray-500 mt-2 h-6"></p>
+        </div>
+        
+        <!-- Random Event Display -->
+        <section id="event-section" class="text-center my-6 hidden">
+            <h3 class="text-xl font-bold text-purple-600 animate-pulse">突发事件！</h3>
+            <p id="event-text" class="text-gray-700 mt-2 p-4 bg-purple-50 border border-purple-200 rounded-lg shadow-inner"></p>
+        </section>
+
+
+        <!-- Dialogue & Score Section -->
+        <section id="dialogue-section">
+             <h2 class="text-2xl font-bold text-center mb-6 text-pink-500">第二步：开始对话</h2>
+            <div class="grid md:grid-cols-3 gap-6">
+                <!-- Dialogue A -->
+                <div class="p-4 bg-white rounded-lg shadow-inner">
+                    <h4 class="font-bold text-center mb-2 text-blue-500">追求者 A 的发言</h4>
+                    <div id="total-score-suitorA" class="text-center text-sm text-gray-500 mb-2">总分: 0</div>
+                    <div class="score-bar-bg">
+                        <div id="score-bar-suitorA" class="score-bar bg-blue-500" style="width: 0%"></div>
+                    </div>
+                    <div id="dialogue-suitorA" class="space-y-4 h-96 overflow-y-auto p-2 bg-gray-50 rounded-md"></div>
+                </div>
+                <!-- Scores -->
+                <div class="p-4 bg-white rounded-lg shadow-inner">
+                    <h4 class="font-bold text-center mb-4 text-yellow-500">裁判的评分</h4>
+                    <div id="scores" class="space-y-4 h-96 overflow-y-auto p-2 bg-gray-50 rounded-md"></div>
+                </div>
+                <!-- Dialogue B -->
+                <div class="p-4 bg-white rounded-lg shadow-inner">
+                     <h4 class="font-bold text-center mb-2 text-green-500">追求者 B 的发言</h4>
+                     <div id="total-score-suitorB" class="text-center text-sm text-gray-500 mb-2">总分: 0</div>
+                     <div class="score-bar-bg">
+                        <div id="score-bar-suitorB" class="score-bar bg-green-500" style="width: 0%"></div>
+                    </div>
+                    <div id="dialogue-suitorB" class="space-y-4 h-96 overflow-y-auto p-2 bg-gray-50 rounded-md"></div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Final Verdict Modal -->
+    <div id="verdict-modal" class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 hidden z-50">
+        <div class="bg-white rounded-2xl shadow-2xl p-6 md:p-8 max-w-2xl w-full transform transition-all scale-95 opacity-0" id="verdict-modal-content">
+            <h2 class="text-3xl font-bold text-center text-pink-600 mb-4">最终的抉择</h2>
+            <div id="verdict-text" class="text-gray-700 whitespace-pre-wrap text-base md:text-lg leading-relaxed max-h-[60vh] overflow-y-auto p-2"></div>
+            <button onclick="closeVerdictModal()" class="btn-primary w-full mt-6 text-lg">❤️ 重新开始一场对局 ❤️</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+
+</body>
+</html>
